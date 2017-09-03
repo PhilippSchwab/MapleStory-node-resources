@@ -1,0 +1,30 @@
+{
+  "name": "maplestory-resources",
+  "version": "0.0.0",
+  "description": "MapleStory Clone Game Resources module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "maplestory"
+  ],
+  "author": "PhilippSchwab",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "coffeescript": "^2.0.0-beta5",
+    "electron": "^1.7.5",
+    "gulp": "^3.9.1",
+    "gulp-changed": "^3.1.0",
+    "gulp-coffee2": "^2.3.4",
+    "gulp-sourcemaps": "^2.6.1",
+    "memwatch-next": "^0.3.0",
+    "pug": "^2.0.0-rc.3"
+  },
+  "dependencies": {
+    "aes-js": "^3.1.0",
+    "deflate-js": "^0.2.3",
+    "iconv-lite": "^0.4.18",
+    "pngjs": "^3.3.0"
+  }
+}
