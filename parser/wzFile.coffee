@@ -23,17 +23,24 @@ module.exports = class Wz_File
     encver = await @file.read_int 2                                     #
     info = { sign, datasize, headersize, copyright, encver }
 
+    # Log record
+    now_path = ['/']
+    rec_count = 0
+
     await Crypto.DetectEncryption @file
 
     directory = () =>
       count = await @file.wz_int()
+      return [] if count is 0
       dir = []
       for i in [1..count]
         result = {file: @file}
+        rec_count += 1
         opt = await @file.readbyte()
         result.name = switch opt
           when 0x02 then await @file.wz_string_at(info.headersize + 1 + await @file.read_int())
           when 0x03, 0x04 then await @file.wz_string()
+        @log(now_path, rec_count, @name) if @log
         result.size = await @file.wz_int()
         result.checksum = await @file.wz_int()
         switch opt
@@ -45,11 +52,11 @@ module.exports = class Wz_File
             result.dirs = true
         dir.push result
 
-      for result in dir
-        unless @base
-          result.dir = await directory() if result.dirs
-        else
-          result.dir = [] if result.dirs
+      for node in dir
+        if node.dirs
+          now_path.push node.name
+          node.dir = await directory()
+          now_path.pop()
 
       dir
 
@@ -71,3 +78,6 @@ module.exports = class Wz_File
     dirOffset(@value.dir)
 
     this
+
+  release: () ->
+    delete @value

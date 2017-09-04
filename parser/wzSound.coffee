@@ -1,11 +1,18 @@
+FileClass = require './FileClass'
 module.exports = class Wz_Sound
-  constructor: (@file, @offset, @length) ->
+  constructor: (file, @offset, @length) ->
+    @file = FileClass.clone file
     @file.seek @offset
-    len = @file.wz_int()
-    ms = @file.wz_int()
-    headerLen = @length - len - (@file.pos() - @offset)
-    @header = @file.read headerLen
-    @start = @file.pos()
+
+  type: "sound"
+  element: true
+
+  parse: () ->
+    len = await @file.wz_int()
+    ms = await @file.wz_int()
+    headerLen = @length - len - (await @file.pos() - @offset)
+    @header = await @file.read headerLen
+    @start = await @file.pos()
     @datalength = @length - (@start - @offset)
     @soundtype = switch @header.length
       when 0, 0x52 then "mp3"
@@ -19,27 +26,13 @@ module.exports = class Wz_Sound
       when @header.length is 0 then
       when @header.length > 51
         waveFormation = @header[51]
-
-  type: "sound"
-  element: true
-
-  current: (opt) ->
-    @file.seek @offset
-    if opt is "buffer"
-      @file.read @size
-    else if opt is "data"
-      @file.seek @start
-      @file.read @datalength
-    else
-      @file
-
-  data: () -> this.current("data")
+    this
 
   extractSound: () ->
     @file.seek @start
     switch @soundtype
       when "mp3"
-        @file.read @datalength
+        await @file.read @datalength
       when "wavraw" then
       else
 

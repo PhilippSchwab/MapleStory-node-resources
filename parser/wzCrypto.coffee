@@ -1,7 +1,7 @@
 # Cryptography for wzparser
 fs = require 'fs'
 aesjs = require 'aes-js'
-fsread = require('util').promisify(fs.read)
+fsread = (fd, data, pos, length, offset) -> new Promise((callback) => fs.read(fd, data, pos, length, offset, callback))
 
 aesecb = new aesjs.ModeOfOperation.ecb(
   [

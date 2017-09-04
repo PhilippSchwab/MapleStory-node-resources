@@ -1,13 +1,14 @@
 fs = require 'fs'
 iconv = require 'iconv-lite'
-stream = require 'stream'
-fsread = require('util').promisify(fs.read)
+fsread = (fd, data, pos, length, offset) -> new Promise((callback) => fs.read(fd, data, pos, length, offset, callback))
 module.exports = class FileClass
   constructor: (@filename) ->
-    @fd = fs.openSync(@filename, 'r')
-    @offset = 0
+    if @filename
+      @fd = fs.openSync(@filename, 'r')
+      @offset = 0
 
   isFile: true
+  toString: () -> "FileClass #{@filename}"
 
   seek: (position) ->
     @offset = position
@@ -15,8 +16,8 @@ module.exports = class FileClass
   read: (length) ->
     data = new Buffer(length)
     get = await fsread(@fd,data,0,length,@offset)
-    @offset += get.bytesRead
-    if get.bytesRead is length
+    @offset += get
+    if get is length
       data
     else
       throw 'EOF'
@@ -90,3 +91,11 @@ module.exports = class FileClass
     str = await this.wz_string()
     this.seek oldoffset
     str
+
+FileClass.copy = FileClass.clone = (ref) ->
+  return if not ref instanceof FileClass
+  clone = new FileClass
+  clone.fd = ref.fd
+  clone.offset = ref.offset
+  clone.filename = ref.filename
+  clone

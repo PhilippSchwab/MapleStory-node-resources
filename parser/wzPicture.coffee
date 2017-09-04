@@ -1,41 +1,33 @@
 fs = require 'fs'
+FileClass = require './FileClass'
 inflate = undefined
 dxt     = undefined
 PNG     = undefined
 module.exports = class Wz_Picture # assign to origin Wz_Png class
-  constructor: (@file, @offset, @length) ->
+  constructor: (file, @offset, @length) ->
+    @file = FileClass.clone file
     @file.seek @offset
-    @width = @file.wz_int()
-    @height = @file.wz_int()
-    @form = @file.wz_int() + @file.readbyte()
-    @file.read 4
-    @bufsize = @file.read_int() - 1
-    @start = @file.pos() + 1
-    @datalength = @length - (@start - @offset)
 
   type: "picture"
   element: true
 
-  current: (opt) ->
-    @file.seek @offset
-    if opt is "buffer"
-      @file.read @size
-    else if opt is "data"
-      @file.seek @start
-      @file.read @datalength
-    else
-      @file
-
-  data: () -> this.current("data")
+  parse: () ->
+    @width = await @file.wz_int()
+    @height = await @file.wz_int()
+    @form = await @file.wz_int() + await @file.readbyte()
+    @file.offset += 4
+    @bufsize = await @file.read_int() - 1
+    @start = @file.offset + 1
+    @datalength = @length - (@start - @offset)
 
   rawdata: () ->
     @file.seek @start
-    stream = if (@file.read_int(2) & 0xffff) is 0x9c78
-      buffer = @file.read(@datalength-2)
+    stream = if (await @file.read_int(2) & 0xffff) is 0x9c78
+      buffer = await @file.read(@datalength-2)
       inflate = require('deflate-js').inflate unless inflate
       inflate buffer
     else
-      console.log "rawPicture excpetion at offset: #{@start}"
+      throw "rawPicture excpetion at offset: #{@start}"
       []
 
     switch @form
@@ -47,9 +39,7 @@ module.exports = class Wz_Picture # assign to origin Wz_Png class
       else
 
   extractRGBA: () ->
-    # return @RGBAdata if @RGBAdata
-    raw = this.rawdata()
-    # @RGBAdata =
+    raw = await this.rawdata()
     switch @form
       when 1
         rgba = new Uint8Array(@width * @height * 4)
@@ -85,7 +75,8 @@ module.exports = class Wz_Picture # assign to origin Wz_Png class
     png = new PNG
       width: @width
       height: @height
-    png.data = new Buffer(this.extractRGBA())
+    png.data = new Buffer(await this.extractRGBA())
+    # async not ready
     png
 
   toString: () -> "Pic{#{@form}}[W#{@width} H#{@height}] - #{@datalength}"
