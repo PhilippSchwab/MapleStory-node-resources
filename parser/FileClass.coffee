@@ -27,8 +27,10 @@ module.exports = class FileClass
     await new Promise (callback, reject) => fs.close(@descriptor.fd, callback)
     @descriptor.fd = undefined
 
-  seek: (position) ->
-    @offset = position
+  # offset change
+  seek: (position) -> @offset = position
+  shift: (position) -> @offset += position; position
+  pos: () -> @offset
 
   read: (length) ->
     data = new Buffer(length)
@@ -40,9 +42,6 @@ module.exports = class FileClass
       throw 'EOF'
 
   readbyte: () -> (await this.read(1))[0]
-
-  pos: () ->
-    @offset
 
   # wz private methods
 

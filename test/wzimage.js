@@ -11,21 +11,29 @@ let origin = path.join('..', 'origin')
 
 let wzlist = fs.readdirSync(origin).filter(e => /\.wz$/.test(e))
 
+let rimage = async function(imagenode) {
+  await imagenode.value.extractImg()
+  if (imagenode.value.value.children) await Promise.all(imagenode.value.value.children.map(rimage))
+}
+
 !(async function() {
   let _log = (p, c, n) => {
     nowlog(n,c,p.join('/'))
   }
-  try {
+  // try {
     let filename = path.join(origin, 'String.wz')
     let file = new parser.wz_file(filename)
     await file.parse()
     let im = new parser.wz_image(file.value.dir[0])
+    im.log.path = true
+    im.log.element = (path, type, value) => {
+      console.log(`${path.join('/')} - ${type} - ${value.toString()}`)
+    }
     im.parse()
-    let c = await im.value.extractImg()
-    log(c)
+    await rimage(im)
     console.log('done')
-  } catch (error) {
-    console.error(error)
-  }
+  // } catch (error) {
+    // console.error(error)
+  // }
   stop()
 })();
