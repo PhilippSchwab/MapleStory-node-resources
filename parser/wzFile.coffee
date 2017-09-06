@@ -12,15 +12,16 @@ module.exports = class Wz_File
       @name = path.basename filename, '.wz'
 
   parse: () ->
+    await @file.open() unless @file.descriptor.fd
     return this if @value
     @file.seek 0
 
     # .wz file head info
     sign = (await @file.read(4)).toString();return if sign != 'PKG1'    # magic number must be "PKG1"
-    datasize = await @file.read_int 8                                   #
-    headersize = await @file.read_int()                                 #
-    copyright = (await @file.read(headersize - @file.pos())).toString() #
-    encver = await @file.read_int 2                                     #
+    datasize = await @file.read_int 8                                   # file size after header
+    headersize = await @file.read_int()                                 # size of wz File head before directories
+    copyright = (await @file.read(headersize - @file.pos())).toString() # copyright info
+    encver = await @file.read_int 2                                     # wz File game version
     info = { sign, datasize, headersize, copyright, encver }
 
     # Log record

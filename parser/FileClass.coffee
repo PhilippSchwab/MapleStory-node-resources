@@ -1,23 +1,40 @@
 fs = require 'fs'
 iconv = require 'iconv-lite'
-fsread = (fd, data, pos, length, offset) -> new Promise((callback) => fs.read(fd, data, pos, length, offset, callback))
+fsread = if (util = require('util'); util.promisify)
+  util.promisify(fs.read)
+else
+  (fd, data, pos, length, offset) -> new Promise((callback, reject) => fs.read(fd, data, pos, length, offset, (err, bytesRead, buffer) => if err then reject(err) else callback({bytesRead})))
 module.exports = class FileClass
   constructor: (@filename) ->
-    if @filename
-      @fd = fs.openSync(@filename, 'r')
-      @offset = 0
+    # file descriptor store as a reference
+    @descriptor = { fd: undefined }
+    # set the file offset in constructor
+    @offset = 0
 
+  ## module class properties
   isFile: true
   toString: () -> "FileClass #{@filename}"
+
+  ## File System Operaions
+  # open a file descriptor
+  open: (filename) ->
+    @filename = filename if filename
+    @descriptor.fd = await new Promise (callback, reject) =>
+      fs.open(@filename, 'r', (err, fd) => if err then reject(err) else callback(fd))
+    this
+  # close this file
+  close: () ->
+    await new Promise (callback, reject) => fs.close(@descriptor.fd, callback)
+    @descriptor.fd = undefined
 
   seek: (position) ->
     @offset = position
 
   read: (length) ->
     data = new Buffer(length)
-    get = await fsread(@fd,data,0,length,@offset)
-    @offset += get
-    if get is length
+    get = await fsread(@descriptor.fd,data,0,length,@offset)
+    @offset += get.bytesRead
+    if get.bytesRead is length
       data
     else
       throw 'EOF'
@@ -95,7 +112,9 @@ module.exports = class FileClass
 FileClass.copy = FileClass.clone = (ref) ->
   return if not ref instanceof FileClass
   clone = new FileClass
-  clone.fd = ref.fd
+  clone.descriptor = ref.descriptor
   clone.offset = ref.offset
   clone.filename = ref.filename
+  clone.decrypt = ref.decrypt if ref.decrypt
+  clone.DetectEncryptionType = ref.DetectEncryptionType if ref.DetectEncryptionType
   clone

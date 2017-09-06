@@ -1,7 +1,10 @@
 # Cryptography for wzparser
 fs = require 'fs'
 aesjs = require 'aes-js'
-fsread = (fd, data, pos, length, offset) -> new Promise((callback) => fs.read(fd, data, pos, length, offset, callback))
+fsread = if (util = require('util'); util.promisify)
+  util.promisify(fs.read)
+else
+  (fd, data, pos, length, offset) -> new Promise((callback, reject) => fs.read(fd, data, pos, length, offset, (err, bytesRead, buffer) => if err then reject(err) else callback({bytesRead})))
 
 aesecb = new aesjs.ModeOfOperation.ecb(
   [
@@ -37,25 +40,25 @@ DecryptFunction = (type) ->
 DetectEncryption = (file) ->
   pos = file.offset
   buffer = new Buffer(4)
-  if (await fsread(file.fd, buffer, 0, 1, pos)).bytesRead is 1
+  if (await fsread(file.descriptor.fd, buffer, 0, 1, pos)).bytesRead is 1
     length = if buffer[0] is 0x80
-      await fsread(file.fd, buffer, 0, 4, pos+1)
+      await fsread(file.descriptor.fd, buffer, 0, 4, pos+1)
       pos += 4
       buffer.readUInt32LE()
     else buffer[0]
-    await fsread(file.fd, buffer, 0, 1, pos+2)
+    await fsread(file.descriptor.fd, buffer, 0, 1, pos+2)
     length = 256 - buffer[0]
     buffer = new Buffer(length)
-    await fsread(file.fd, buffer, 0, length, pos+3)
+    await fsread(file.descriptor.fd, buffer, 0, length, pos+3)
     trans = buffer.map((o,i) => o ^ (0xAA + i))
     result = [ null, "BMS", "KMS", "GMS" ].map (type) -> String.fromCharCode DecryptFunction(type)(trans)...
     for str, i in result
       if /\.img$/.test(str) || /^[\w\.]+$/.test(str)
         type = [ null, "BMS", "KMS", "GMS" ][i]
-        file.DetectEncryptionType = (type || "noencrypt")
+        file.DetectEncryptionType = (type || null)
         file.decrypt = DecryptFunction(type)
         break
   else
     throw 'File cannot read, DetectEncryption failed'
 
-module.exports = { DetectEncryption }
+module.exports = { DetectEncryption, DecryptFunction }
