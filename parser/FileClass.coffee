@@ -93,17 +93,17 @@ module.exports = class FileClass
       when 0x00, 0x73
         await this.wz_string()
       when 0x01, 0x1b
-        o = this.pos() - 1 if o == -1
+        o = @offset - 1 if o == -1
         await this.wz_string_at(o + await this.read_int())
       when 0x04
         await this.read(8)
         ""
       else
-        console.error "string error: #{this.pos()}"
-        throw "string error: #{this.pos()}"
+        console.error "string error: #{@offset}"
+        throw "string error: #{@offset}"
 
   wz_string_at: (offset) ->
-    oldoffset = this.pos()
+    oldoffset = @offset
     this.seek offset
     str = await this.wz_string()
     this.seek oldoffset

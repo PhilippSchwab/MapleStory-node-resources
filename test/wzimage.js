@@ -16,10 +16,10 @@ let wzlist = fs.readdirSync(origin).filter(e => /\.wz$/.test(e))
     nowlog(n,c,p.join('/'))
   }
   try {
-    let filename = path.join(origin, 'Base.wz')
+    let filename = path.join(origin, 'String.wz')
     let file = new parser.wz_file(filename)
     await file.parse()
-    let im = new parser.wz_image(file.value.dir[4])
+    let im = new parser.wz_image(file.value.dir[0])
     im.parse()
     let c = await im.value.extractImg()
     log(c)

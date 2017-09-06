@@ -30,7 +30,7 @@ function createWindow () {
     slashes: true
   }))
 
-  win.webContents.executeJavaScript(script);
+  win.webContents.executeJavaScript(`document.write("<script src='${path.basename(scriptPath)}'></script>")`);
 
   // Open the DevTools if signed
   if (/\/\*\s*devtool\s*\*\//i.test(script)) win.webContents.openDevTools();

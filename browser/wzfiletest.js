@@ -1,17 +1,23 @@
+/* devtool */
 const fs = require('fs');
 const path = require('path');
 const parser = require('../parser');
-const {log,stop,nowlog} = require('./test_module');
+const com = require('./_common');
 
-try {
-  const memwatch = require('memwatch-next');
-  memwatch.on('leak', (info) => { log('Memory leak detected:\n', JSON.stringify(info)); });
-  memwatch.on('stats', (info) => {global.info.base = info.current_base;global.info.max_mem = info.max;global.info.min_mem = info.min})
-} catch (_) {}
+com.render(`
+#a
+pre#b
+`)
+let nowlog = (...str) => document.getElementById('a').innerText = str.join(', ')
+let printlog = (str) => document.getElementById('b').innerText += '\n' + str
+// const memwatch = require('memwatch-next');
+// memwatch.on('leak', (info) => { log('Memory leak detected:\n', JSON.stringify(info)); });
+// memwatch.on('stats', (info) => {global.info.base = info.current_base;global.info.max_mem = info.max;global.info.min_mem = info.min})
 
 let origin = path.join('..', 'origin')
 
 let wzlist = fs.readdirSync(origin).filter(e => /\.wz$/.test(e))
+let list
 
 /**
  * Print Wz_File Directory
@@ -19,26 +25,29 @@ let wzlist = fs.readdirSync(origin).filter(e => /\.wz$/.test(e))
  * @param {Wz_File} wzfile
  */
 function printDir(wzfile) {
+  let info = ''
   let space = len => new Array(len*2 + 1).join(' ')
-  console.log(`${wzfile.name}:${wzfile.value ? `[${wzfile.value.dir.length}]` : ''}`)
+  info += (`${wzfile.name}:${wzfile.value ? `[${wzfile.value.dir.length}]` : ''}\n`)
   if (!wzfile.value) {
-    console.log('unparsed wzfile')
+    info += ('unparsed wzfile\n')
     return
   }
   let level = 0
   let r = (node) => {
     level += 1
     node.map((n) => {
-      let info = (`${space(level)}${n.name}${n.dirs ? `:[${n.dir.length}]` : ''}`)
-      console.log(info)
+      let inf = (`${space(level)}${n.name}${n.dirs ? `:[${n.dir.length}]` : ''}\n`)
+      info += (inf)
       n.dirs && r(n.dir)
     })
     level -= 1
   }
   r(wzfile.value.dir)
+  return info
 }
 
 let syncTest = (async function() {
+  let timestart = new Date()
   let _log = (p, c, n) => {
     nowlog(n,c,p.join('/'))
   }
@@ -49,7 +58,7 @@ let syncTest = (async function() {
       let file = new parser.wz_file(filename)
       file.log = _log
       await file.parse()
-      printDir(file)
+      printlog(printDir(file))
       file.release()
     } catch (error) {
       console.error(e)
@@ -57,22 +66,22 @@ let syncTest = (async function() {
     }
   }
   stop()
-  console.error(`wzfile recursion done, use ${(new Date) - global.timestart}ms, final memory base ${global.info.base} ${global.info.min_mem}-${global.info.max_mem}`)
+  console.log(`wzfile recursion done, use ${(new Date) - timestart}ms`)
 });
 
 let asyncTest = (async function() {
+  let timestart = new Date()
   let _log = (p, c, n) => {
     nowlog(n,c,p.join('/'))
   }
-  let a = await Promise.all(wzlist.map(async e => {
+  list = await Promise.all(wzlist.map(async e => {
     try {
       let filename = path.join(origin, e)
       let file = new parser.wz_file(filename)
       file.log = _log
       // if (file.name.match(/character/i))
         await file.parse()
-      printDir(file)
-      // console.error(`${JSON.stringify(file.value && file.value.info)}`)
+      printlog(printDir(file))
       file.release()
       return file
     } catch (error) {
@@ -80,9 +89,8 @@ let asyncTest = (async function() {
       console.error(error)
     }
   }))
-  console.error(a.map(e => `File ${e.name} =${e.file.offset}`).join("\n"))
+  console.error(list.map(e => `File ${e.name} =${e.file.offset}`).join("\n"))
   stop()
-  console.error(`wzfile recursion done, use ${(new Date) - global.timestart}ms, final memory base ${global.info.base} ${global.info.min_mem}-${global.info.max_mem}`)
+  console.error(`wzfile recursion done, use ${(new Date) - timestart}ms`)
 });
 
-1 ? asyncTest() : syncTest()
