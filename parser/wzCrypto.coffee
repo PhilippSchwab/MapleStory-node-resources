@@ -30,7 +30,7 @@ class Wz_Crypto
 ###*
 # make decrypt function
 ###
-Wz_Crypto.DecryptFunction = (type) ->
+Wz_Crypto.DecryptFunction = DecryptFunction = (type) ->
   switch type
     when null
       (cipherbuffer) -> cipherbuffer
@@ -46,7 +46,7 @@ Wz_Crypto.DecryptFunction = (type) ->
 ###*
 # DetectEncryption for wz File
 ###
-Wz_Crypto.DetectEncryption = (file) ->
+Wz_Crypto.DetectEncryption = DetectEncryption = (file) ->
   pos = file.offset
   buffer = new Buffer(4)
   if (await fsread(file.descriptor.fd, buffer, 0, 1, pos)).bytesRead is 1
