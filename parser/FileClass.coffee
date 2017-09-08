@@ -3,7 +3,7 @@ iconv = require 'iconv-lite'
 fsread = if (util = require('util'); util.promisify)
   util.promisify(fs.read)
 else
-  (fd, data, pos, length, offset) -> new Promise((callback, reject) => fs.read(fd, data, pos, length, offset, (err, bytesRead, buffer) => if err then reject(err) else callback({bytesRead})))
+  (fd, data, pos, length, offset) -> new Promise((callback, reject) => fs.read(fd, data, pos, length, offset, (err, bytesRead, buffer) => if err then reject(err) else callback({err, bytesRead})))
 module.exports = class FileClass
   constructor: (@filename) ->
     # file descriptor store as a reference
@@ -36,6 +36,7 @@ module.exports = class FileClass
     data = new Buffer(length)
     get = await fsread(@descriptor.fd,data,0,length,@offset)
     @offset += get.bytesRead
+    throw get.err if get.err
     if get.bytesRead is length
       data
     else
@@ -54,9 +55,9 @@ module.exports = class FileClass
       when 8 then data.readUInt32LE() + data.readUInt32LE(4) * 0x10000
       else
 
-  read_double: () -> await this.read(8).readDoubleLE()
+  read_double: () -> (await this.read(8)).readDoubleLE()
 
-  wz_single: () -> if (s = await this.readbyte()) is 0x80 then await this.read(4).readFloatLE() else if s >= 128 then s - 256 else s
+  wz_single: () -> if (s = await this.readbyte()) is 0x80 then (await this.read(4)).readFloatLE() else if s >= 128 then s - 256 else s
 
   wz_int: (i=4) -> if (s = await this.readbyte()) is 0x80 then await this.read_int(i) else if s >= 128 then s - 256 else s
 
@@ -93,12 +94,13 @@ module.exports = class FileClass
         await this.wz_string()
       when 0x01, 0x1b
         o = @offset - 1 if o == -1
-        await this.wz_string_at(o + await this.read_int())
+        offset = await this.read_int()
+        await this.wz_string_at(o + offset)
       when 0x04
         await this.read(8)
         ""
       else
-        console.error "string error: #{@offset}"
+        console.error "string error: flag #{flag} @ #{@offset}"
         throw "string error: #{@offset}"
 
   wz_string_at: (offset) ->
