@@ -1,7 +1,15 @@
 FileClass = require './FileClass'
 Crypto = require './wzCrypto'
 path = require 'path'
-module.exports = class Wz_File
+###*
+# wz File Directory class
+# **%** Construction
+#
+# Wz File is consist by a directory index and many image elements,
+# this class fouce on extracting file index and get their offset and size,
+#
+###
+class Wz_File
   constructor: (file) ->
     if file.isFile
       @file = file
@@ -11,6 +19,7 @@ module.exports = class Wz_File
       @file = new FileClass filename + '.wz'
       @name = path.basename filename, '.wz'
 
+  ###* parse the wz file with directory of images ###
   parse: () ->
     await @file.open() unless @file.descriptor.fd
     return this if @value
@@ -80,5 +89,8 @@ module.exports = class Wz_File
 
     this
 
+  ###* release the parsed value ###
   release: () ->
     delete @value
+
+module.exports = Wz_File

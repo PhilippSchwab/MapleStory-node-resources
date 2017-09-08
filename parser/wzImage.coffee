@@ -13,7 +13,6 @@ class ImageNode
       @father = father
       @path = if father.path then father.path.slice(0) else []
 
-  type: "image"
   toString: () -> "ImageNode#{if @path then ":#{@path.join '/'}" else ''}"
 
   extractImg: () ->
@@ -84,8 +83,10 @@ class ImageNode
     @value = node
     this
 
-
-module.exports = class Wz_Image
+###*
+# image element in wzFile
+###
+class Wz_Image
   constructor: (@info) ->
     @name = @info.name
     @file = @info.file
@@ -95,12 +96,11 @@ module.exports = class Wz_Image
     @_node_type = class Node extends ImageNode
       ref: self
 
-  type: "image"
-  element: true
-
-  # Parse WZ Image
+  ###* Parse WZ Image ###
   parse: () ->
     @value = new @_node_type(@info.offset, @info.size, this)
     this
 
-
+module.exports = Wz_Image
+module.exports.prototype.element = true
+module.exports.prototype.type = "image"

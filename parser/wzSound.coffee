@@ -1,11 +1,8 @@
 FileClass = require './FileClass'
-module.exports = class Wz_Sound
+class Wz_Sound
   constructor: (file, @offset, @length) ->
     @file = FileClass.clone file
     @file.seek @offset
-
-  type: "sound"
-  element: true
 
   parse: () ->
     len = await @file.wz_int()
@@ -37,3 +34,7 @@ module.exports = class Wz_Sound
       else
 
   toString: () -> "Sound{#{@soundtype}} - #{@datalength}"
+
+module.exports = Wz_Sound
+module.exports.prototype.element = true
+module.exports.prototype.type = "sound"

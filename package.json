@@ -4,7 +4,8 @@
   "description": "MapleStory Clone Game Resources module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "gulp coffee-compile && jsdoc -c jsdoc.conf.json -R README.md"
   },
   "keywords": [
     "maplestory"

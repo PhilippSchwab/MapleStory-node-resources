@@ -24,7 +24,13 @@ EncryptionType =
   KMS: [ 0xb9, 0x7d, 0x63, 0xe9 ]
   GMS: [ 0x4d, 0x23, 0xc7, 0x2b ]
 
-DecryptFunction = (type) ->
+###* methods of crypto ###
+class Wz_Crypto
+
+###*
+# make decrypt function
+###
+Wz_Crypto.DecryptFunction = (type) ->
   switch type
     when null
       (cipherbuffer) -> cipherbuffer
@@ -37,7 +43,10 @@ DecryptFunction = (type) ->
           nowkey = aesecb.encrypt(nowkey) if i >= 16 && i % 16 == 0
           (e ^ nowkey[i % 16])
 
-DetectEncryption = (file) ->
+###*
+# DetectEncryption for wz File
+###
+Wz_Crypto.DetectEncryption = (file) ->
   pos = file.offset
   buffer = new Buffer(4)
   if (await fsread(file.descriptor.fd, buffer, 0, 1, pos)).bytesRead is 1
@@ -61,4 +70,4 @@ DetectEncryption = (file) ->
   else
     throw 'File cannot read, DetectEncryption failed'
 
-module.exports = { DetectEncryption, DecryptFunction }
+module.exports = Wz_Crypto

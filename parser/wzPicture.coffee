@@ -3,13 +3,10 @@ FileClass = require './FileClass'
 inflate = undefined
 dxt     = undefined
 PNG     = undefined
-module.exports = class Wz_Picture # assign to origin Wz_Png class
+class Wz_Picture # assign to origin Wz_Png class
   constructor: (file, @offset, @length) ->
     @file = FileClass.clone file
     @file.seek @offset
-
-  type: "picture"
-  element: true
 
   parse: () ->
     @width = await @file.wz_int()
@@ -80,3 +77,7 @@ module.exports = class Wz_Picture # assign to origin Wz_Png class
     png
 
   toString: () -> "Pic{#{@form}}[W#{@width} H#{@height}] - #{@datalength}"
+
+module.exports = Wz_Picture
+module.exports.prototype.element = true
+module.exports.prototype.type = "picture"
