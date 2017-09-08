@@ -3,10 +3,11 @@ Crypto = require './wzCrypto'
 path = require 'path'
 ###*
 # wz File Directory class
+#
 # **%** Construction
 #
 # Wz File is consist by a directory index and many image elements,
-# this class fouce on extracting file index and get their offset and size,
+# this class foucs on extracting file index and get their offset and size,
 #
 ###
 class Wz_File
