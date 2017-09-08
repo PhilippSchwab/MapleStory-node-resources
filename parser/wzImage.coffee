@@ -1,4 +1,4 @@
-[FileClass, Wz_Sound, Wz_Vector, Wz_Picture, Wz_Picture] = [
+[FileClass, Wz_Sound, Wz_Vector, Wz_Picture, Wz_Uol] = [
   require './FileClass'
   require './wzSound'
   require './wzVector'
@@ -33,7 +33,7 @@ class ImageNode
         when 0x04 then [await @file.wz_single(), 'float']
         when 0x05 then [await @file.read_double(), 'float']
         when 0x08 then [await @file.wz_string_mod(@ref.info.offset), 'string']
-        when 0x09 then [new @ref._node_type(@file.offset, @file.shift(await @file.read_int()), this), 'image']
+        when 0x09 then [(length = await @file.read_int();new @ref._node_type(@file.offset, @file.shift(length), this)), 'image']
         else
           throw "extractValue 0x#{flag.toString(16)} error at offset: #{@file.pos()}"
       @ref.log.element(@path, value.type, value.value) if @ref.log.element
@@ -82,6 +82,9 @@ class ImageNode
       else
         throw "unknown wz tag: #{tag}"
     @value = node
+    this
+
+
 module.exports = class Wz_Image
   constructor: (@info) ->
     @name = @info.name
