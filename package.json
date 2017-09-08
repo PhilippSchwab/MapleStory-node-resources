@@ -20,6 +20,7 @@
     "gulp-changed": "^3.1.0",
     "gulp-coffee2": "^2.3.4",
     "gulp-sourcemaps": "^2.6.1",
+    "jsdoc": "^3.5.4",
     "memwatch-next": "^0.3.0",
     "pug": "^2.0.0-rc.3"
   },
