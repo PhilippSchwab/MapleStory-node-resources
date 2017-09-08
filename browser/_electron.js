@@ -12,6 +12,7 @@ if (!fs.existsSync(scriptPath)) {
   console.error(scriptPath + ' don\'t exist')
   process.exit(1);
 }
+fs.writeFileSync('./browser/_index.html',`<script src='${path.basename(scriptPath)}'></script>`)
 
 let script = fs.readFileSync(scriptPath).toString()
 
@@ -29,8 +30,6 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   }))
-
-  win.webContents.executeJavaScript(`document.write("<script src='${path.basename(scriptPath)}'></script>")`);
 
   // Open the DevTools if signed
   if (/\/\*\s*devtool\s*\*\//i.test(script)) win.webContents.openDevTools();
@@ -54,6 +53,7 @@ app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin' || 1) {
+    fs.writeFileSync('./browser/_index.html',"<!-- MapleStory Resources Browser -->\n")
     app.quit()
   }
 })
