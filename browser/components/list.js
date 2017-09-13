@@ -222,14 +222,14 @@ class ListNode {
         this.onClick && this.onClick(this, e)
       }
     }
-    if (this.type) {
+    if (this.type !== undefined) {
       let typeElem = document.createElement('div')
       typeElem.classList.add('info-menu-node-name-type')
       typeElem.innerText = this.type
       typeElem.onclick = this.onTypeClick && ((e) => {e.stopPropagation();this.onTypeClick(this, e)})
       nameElem.appendChild(typeElem)
     }
-    if (this.value) {
+    if (this.value !== undefined) {
       let valueElem = document.createElement('div')
       valueElem.classList.add('info-menu-node-value')
       valueElem.innerText = this.value

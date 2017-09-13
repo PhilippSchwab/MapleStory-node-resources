@@ -39,7 +39,7 @@ let rimage = async function(imagenode) {
       await file.parse()
       let logelement = (path, type, value) => {
         i++
-        nowlog(`[${e}] [${i}] ${i/((new Date) - global.timestart)}/ms ${path.join('/')} - ${type} - ${value.toString().substring(0,15)}`)
+        nowlog(`[${e}] [${i}] ${(i/((new Date) - global.timestart).toString().substring(0,4))}/ms ${path.join('/')} - ${type} - ${value && value.toString().substring(0,15)}`)
       }
       let rimg = async e => {
         let im = new parser.wz_image(e)
