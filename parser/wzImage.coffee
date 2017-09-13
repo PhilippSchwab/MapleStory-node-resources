@@ -25,7 +25,7 @@ class ImageNode
       value.name = await @file.wz_string_mod @ref.info.offset
       @path.push value.name if @path
       [value.value, value.type] = switch flag = await @file.readbyte()
-        when 0x00 then [null, null]
+        when 0x00 then [null, 'null']
         when 0x02, 0x0b then [await @file.read_int(2), 'integer']
         when 0x03, 0x13 then [await @file.wz_int(), 'integer']
         when 0x14 then [await @file.wz_int(8), 'integer']
