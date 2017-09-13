@@ -127,7 +127,7 @@ let ImageParser = async function() {
         name: el.name,
         ref: el,
         onClick: (e) => {saveLocal(e)},
-        value: function() {return this.ref.value.toString()},
+        value: function() {this.ref.value && this.ref.value.toString()},
         type: function() {return this.ref.type},
         onTypeClick: typeAdd,
         onValueClick: Preview,
