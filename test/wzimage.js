@@ -7,6 +7,7 @@ const memwatch = require('memwatch-next');
 memwatch.on('leak', (info) => { log('Memory leak detected:\n', JSON.stringify(info)); });
 memwatch.on('stats', (info) => {global.info.base = info.current_base;global.info.max_mem = info.max;global.info.min_mem = info.min})
 
+let i = 0;
 let origin = path.join('..', 'origin')
 
 let wzlist = fs.readdirSync(origin).filter(e => /\.wz$/.test(e))
@@ -37,7 +38,8 @@ let rimage = async function(imagenode) {
       let file = new parser.wz_file(filename)
       await file.parse()
       let logelement = (path, type, value) => {
-        nowlog(`[${e}] ${path.join('/')} - ${type} - ${value.toString().substring(0,15)}`)
+        i++
+        nowlog(`[${e}] [${i}] ${i/((new Date) - global.timestart)}/ms ${path.join('/')} - ${type} - ${value.toString().substring(0,15)}`)
       }
       let rimg = async e => {
         let im = new parser.wz_image(e)

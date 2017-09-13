@@ -16,6 +16,7 @@ class Wz_Picture # assign to origin Wz_Png class
     @bufsize = await @file.read_int() - 1
     @start = @file.offset + 1
     @datalength = @length - (@start - @offset)
+    this
 
   rawdata: () ->
     @file.seek @start
@@ -39,7 +40,7 @@ class Wz_Picture # assign to origin Wz_Png class
     raw = await this.rawdata()
     switch @form
       when 1
-        rgba = new Uint8Array(@width * @height * 4)
+        rgba = new Uint8ClampedArray(@width * @height * 4)
         (if @width * @height then [0..@width * @height - 1] else []).map (i) =>
           rgba[i*4 + 0] = (p = raw[i*2+1] & 0x0F; p |= (p << 4))
           rgba[i*4 + 1] = (p = raw[i*2] & 0xF0; p |= (p >> 4))
@@ -47,7 +48,7 @@ class Wz_Picture # assign to origin Wz_Png class
           rgba[i*4 + 3] = (p = raw[i*2+1] & 0xF0; p |= (p >> 4))
         rgba
       when 2
-        rgba = new Uint8Array(@width * @height * 4)
+        rgba = new Uint8ClampedArray(@width * @height * 4)
         console.warn('unsure about mode 2')
         (if @width * @height then [0..@width * @height - 1] else []).map (i) =>
           rgba[i*4 + 0] = raw[i*4 + 2]
@@ -65,7 +66,7 @@ class Wz_Picture # assign to origin Wz_Png class
           when 2050 then dxt.flags.DXT5
       else
         console.error "other picture format: " + @form
-        new Uint8Array(@width * @height * 4)
+        new Uint8ClampedArray(@width * @height * 4)
 
   extractPNG: () ->
     PNG = require('pngjs').PNG unless PNG

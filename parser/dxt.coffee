@@ -14,14 +14,14 @@ rgb565 = (val) ->
   {R,G,B}
 
 decompress = () -> # DXT5 & DXT3
-  @pixel = new Uint8Array(@width * @height * 4)
-  @view = new DataView(@data)
-  @rawData = new Uint8Array(@data)
+  @pixel = new Uint8ClampedArray(@width * @height * 4)
+  @view = new Uint8ClampedArray(@data)
+  @rawData = new Uint8ClampedArray(@data)
 
   @colorTable = []
-  @colorIdxTable = new Uint8Array(16)
-  @alphaTable = new Uint8Array(16)
-  @alphaIdxTable = new Uint8Array(16)
+  @colorIdxTable = new Uint8ClampedArray(16)
+  @alphaTable = new Uint8ClampedArray(16)
+  @alphaIdxTable = new Uint8ClampedArray(16)
 
   setPixel = (x,y,color,alpha) =>
     offset = (y * @width + x) * 4
