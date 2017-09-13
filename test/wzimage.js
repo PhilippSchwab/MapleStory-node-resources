@@ -3,9 +3,11 @@ const path = require('path');
 const parser = require('../parser');
 const {log,stop,nowlog} = require('./test_module');
 
-const memwatch = require('memwatch-next');
-memwatch.on('leak', (info) => { log('Memory leak detected:\n', JSON.stringify(info)); });
-memwatch.on('stats', (info) => {global.info.base = info.current_base;global.info.max_mem = info.max;global.info.min_mem = info.min})
+try {
+  const memwatch = require('memwatch-next');
+  memwatch.on('leak', (info) => { log('Memory leak detected:\n', JSON.stringify(info)); });
+  memwatch.on('stats', (info) => {global.info.base = info.current_base;global.info.max_mem = info.max;global.info.min_mem = info.min})
+} catch (error) {}
 
 let i = 0;
 let origin = path.join('..', 'origin')
