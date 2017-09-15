@@ -20,9 +20,12 @@
     "gulp-changed": "^3.1.0",
     "gulp-coffee2": "^2.3.4",
     "gulp-sourcemaps": "^2.6.1",
+    "gulp-typescript": "^3.2.2",
     "jsdoc": "^3.5.4",
     "memwatch-next": "^0.3.0",
-    "pug": "^2.0.0-rc.3"
+    "merge2": "^1.2.0",
+    "pug": "^2.0.0-rc.3",
+    "typescript": "^2.5.2"
   },
   "dependencies": {
     "aes-js": "^3.1.0",
