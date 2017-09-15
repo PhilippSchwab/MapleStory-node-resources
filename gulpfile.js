@@ -20,6 +20,8 @@ gulp.task('type-compile', function() {
   var tsResult = gulp.src(['**/*.ts','!./node_modules/**'])
       .pipe(ts({
           declaration: true,
+          target: 'es2017',
+          module: 'commonjs',
           // allowJs: true
       }));
 
@@ -28,3 +30,5 @@ gulp.task('type-compile', function() {
       tsResult.js.pipe(gulp.dest('./'))
   ]);
 });
+
+gulp.task('compile', ['coffee-compile', 'type-compile']);

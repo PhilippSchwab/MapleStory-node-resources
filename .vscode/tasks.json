@@ -8,6 +8,18 @@
             "label": "coffee-compile",
             "task": "coffee-compile",
             "problemMatcher": []
+        },
+        {
+            "type": "gulp",
+            "label": "type-compile",
+            "task": "type-compile",
+            "problemMatcher": []
+        },
+        {
+            "type": "gulp",
+            "label": "compile",
+            "task": "compile",
+            "problemMatcher": []
         }
     ]
 }

@@ -1,4 +1,5 @@
 declare class FileClass {
+  constructor(file?: string)
   /** descriptor.fd 用于存储打开的文件描述符 */
   descriptor: { fd?: number }
   filename?: string
