@@ -20,33 +20,37 @@ declare class FileClass {
 interface FileClass {
   clone(ref: FileClass): FileClass
 }
+interface FileDirInfo {
+  name: string
+  dirs: true
+  dir?: ImageInfo[]
+}
 interface ImageInfo {
   name: string
-  dirs: boolean
-  dir?: [ImageInfo]
+  dirs: undefined
 }
 declare class Wz_File {
   constructor(file: string | FileClass)
   parse(): Promise<Wz_File>
   release(): void
-  value?: [ImageInfo]
+  value?: (ImageInfo|FileDirInfo)[]
 
   /**
    * 可选的解析中日志
    *
    * 为log对象赋值函数，在解析到新纪录时获得通知
    *
-   * - `path`  当前路径 [string]
+   * - `path`  当前路径 string[]
    * - `count` 已加载多少记录
    * - `name`  当前加载记录名称
    */
-  log?: (now_path: [string], count: number, name: string) => void
+  log?: (now_path: string[], count: number, name: string) => void
 }
 
 declare namespace ImageTypes {
   interface ImagePropertyNode {
     class: "Property"
-    children: [ImageNodeValue]
+    children: ImageNodeValue[]
   }
   interface ImageVectorNode {
     class: "Shape2D#Vector2D" | "Shape2D#Convex2D"
@@ -54,7 +58,7 @@ declare namespace ImageTypes {
   }
   interface ImageCanvasNode {
     class: "Canvas"
-    children?: [ImageNodeValue]
+    children?: ImageNodeValue[]
     value: Wz_Picture
   }
   interface ImageSoundNode {
@@ -109,7 +113,7 @@ declare class Wz_Uol {
   toString(): string
   element: true
   type: "uol"
-  link: [string]
+  link: string[]
 }
 export default undefined
 export {
