@@ -9,7 +9,7 @@ declare class FileClass {
   offset: number
 
   open(filename?: string): Promise<this>
-  close(): Promise<this>
+  close(): Promise<void>
 
   /** 改变文件位置 */
   seek(position: number): number
@@ -24,7 +24,7 @@ interface FileClass {
 interface FileDirInfo {
   name: string
   dirs: true
-  dir?: ImageInfo[]
+  dir?: (ImageInfo|FileDirInfo)[]
 }
 interface ImageInfo {
   name: string
@@ -32,7 +32,7 @@ interface ImageInfo {
 }
 declare class Wz_File {
   constructor(file: string | FileClass)
-  parse(): Promise<Wz_File>
+  parse(): Promise<this>
   release(): void
   value?: (ImageInfo|FileDirInfo)[]
 
