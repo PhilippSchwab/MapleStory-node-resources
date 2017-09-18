@@ -1,0 +1,18 @@
+{
+    "search.exclude": {
+        "node_modules": true,
+        "/docs": true,
+        "classification/*.d.ts": true,
+        "classification/*.js": true,
+        "parser/*.js": true,
+        "test/*.out": true
+    },
+    "files.exclude": {
+        "node_modules": true,
+        "/docs": true,
+        "classification/*.d.ts": true,
+        "classification/*.js": true,
+        "parser/*.js": true,
+        "test/*.out": true
+    }
+}
