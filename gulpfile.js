@@ -18,16 +18,15 @@ gulp.task('coffee-compile', function () {
 
 gulp.task('type-compile', function() {
   var tsResult = gulp.src(['**/*.ts','!./node_modules/**'])
+      .pipe(sourcemaps.init())
       .pipe(ts({
           declaration: true,
           target: 'es2017',
-          module: 'commonjs',
-          // allowJs: true
+          module: 'commonjs'
       }));
-
   return merge([
       tsResult.dts.pipe(gulp.dest('./')),
-      tsResult.js.pipe(gulp.dest('./'))
+      tsResult.js.pipe(sourcemaps.write()).pipe(gulp.dest('./'))
   ]);
 });
 
