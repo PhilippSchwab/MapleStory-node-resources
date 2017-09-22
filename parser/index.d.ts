@@ -70,10 +70,31 @@ declare namespace ImageTypes {
     class: "UOL"
     value: Wz_Uol
   }
-  interface ImageNodeValue {
+  type ImageNodeValue = ImageNodeNullValue | ImageNodeIntValue | ImageNodeFloatValue | ImageNodeStringValue | ImageNodeImageValue
+  interface ImageNodeNullValue {
     name: string
-    type: "null" | "integer" | "float" | "string" | "image"
-    value: null | number | string | ImageNode
+    type: "null"
+    value: null
+  }
+  interface ImageNodeIntValue {
+    name: string
+    type: "integer"
+    value: number
+  }
+  interface ImageNodeFloatValue {
+    name: string
+    type: "float"
+    value: number
+  }
+  interface ImageNodeStringValue {
+    name: string
+    type: "string"
+    value: string
+  }
+  interface ImageNodeImageValue {
+    name: string
+    type: "image"
+    value: ImageNode
   }
   class ImageNode {
     extractImg(): Promise<this>

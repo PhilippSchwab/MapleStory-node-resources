@@ -2,17 +2,21 @@
     "search.exclude": {
         "node_modules": true,
         "/docs": true,
-        "classification/*.d.ts": true,
-        "classification/*.js": true,
+        "classify/*.d.ts": true,
+        "classify/*.js": true,
         "parser/*.js": true,
+        "pool/*.d.ts": true,
+        "pool/*.js": true,
         "test/*.out": true
     },
     "files.exclude": {
         "node_modules": true,
         "/docs": true,
-        "classification/*.d.ts": true,
-        "classification/*.js": true,
+        "classify/*.d.ts": true,
+        "classify/*.js": true,
         "parser/*.js": true,
+        "pool/*.d.ts": true,
+        "pool/*.js": true,
         "test/*.out": true
     }
 }
