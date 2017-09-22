@@ -77,7 +77,7 @@ let Preview = function(node) {
     }
   }
   else {
-    detail.innerText = node.ref.value
+    detail.innerHTML = `<pre>${node.ref.value}</pre>`
   }
 }
 let ImageParser = async function() {

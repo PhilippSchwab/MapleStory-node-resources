@@ -57,7 +57,7 @@ class Wz_Picture # assign to origin Wz_Png class
           rgba[i*4 + 3] = raw[i*4 + 3]
         rgba
       when 1026, 2050
-        console.log 'dxt flag: ', switch @form
+        console.error 'dxt flag: ', switch @form
           when 1026 then 'DXT3'
           when 2050 then 'DXT5'
         dxt = require('./dxt') unless dxt
@@ -65,7 +65,7 @@ class Wz_Picture # assign to origin Wz_Png class
           when 1026 then dxt.flags.DXT3
           when 2050 then dxt.flags.DXT5
       else
-        console.error "other picture format: " + @form
+        throw "other picture format: " + @form
         new Uint8ClampedArray(@width * @height * 4)
 
   extractPNG: () ->
