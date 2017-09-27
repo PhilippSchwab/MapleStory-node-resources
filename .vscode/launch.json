@@ -10,7 +10,8 @@
             "name": "node",
             "stopOnEntry": true,
             "preLaunchTask": "compile",
-            "program": "${file}"
+            "program": "${file}",
+            "cwd": "${workspaceRoot}"
         },
         {
             "type": "node",

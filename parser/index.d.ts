@@ -21,20 +21,25 @@ declare class FileClass {
 interface FileClass {
   clone(ref: FileClass): FileClass
 }
-interface FileDirInfo {
-  name: string
-  dirs: true
-  dir?: (ImageInfo|FileDirInfo)[]
+
+declare namespace FileTypes {
+  interface FileDirInfo {
+    name: string
+    dirs: true
+    dir?: (ImageInfo|FileDirInfo)[]
+  }
+  interface ImageInfo {
+    name: string
+    dirs: false
+  }
 }
-interface ImageInfo {
-  name: string
-  dirs: undefined
-}
+type FileTypes = FileTypes.FileDirInfo | FileTypes.ImageInfo
+
 declare class Wz_File {
   constructor(file: string | FileClass)
   parse(): Promise<this>
   release(): void
-  value?: (ImageInfo|FileDirInfo)[]
+  value?: FileTypes[]
 
   /**
    * 可选的解析中日志
@@ -98,12 +103,14 @@ declare namespace ImageTypes {
   }
   class ImageNode {
     extractImg(): Promise<this>
+    release(): void
+    type: "ImageNode"
     value?: ImagePropertyNode | ImageVectorNode | ImageCanvasNode | ImageSoundNode | ImageUolNode
   }
 }
 
 declare class Wz_Image {
-  constructor(info: ImageInfo)
+  constructor(info: FileTypes.ImageInfo)
   parse(): this
   value?: ImageTypes.ImageNode
 }
@@ -141,5 +148,12 @@ export default undefined
 export {
   FileClass as fileclass,
   Wz_File as wz_file,
-  Wz_Image as wz_image
+  Wz_Image as wz_image,
+  // Do not use it, only for typing
+  Wz_Sound as wz_sound,
+  Wz_Vector as wz_vector,
+  Wz_Picture as wz_picture,
+  Wz_Uol as wz_uol,
+  ImageTypes,
+  FileTypes
 }

@@ -83,6 +83,11 @@ class ImageNode
     @value = node
     this
 
+  release: () ->
+    delete @value
+
+ImageNode.prototype.type = "ImageNode"
+
 ###*
 # image element in wzFile
 ###
