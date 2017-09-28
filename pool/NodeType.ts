@@ -3,7 +3,8 @@ export abstract class NodeType {
   constructor(parent: NodeType) {
     this.father = parent
   }
-  abstract async node(): Promise<NodeType | void>
+  abstract async node(path?: string | string[]): Promise<NodeType | void>
+  abstract async list(): Promise<any>
   abstract name(): string
 }
 

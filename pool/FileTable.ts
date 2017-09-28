@@ -11,7 +11,21 @@ export class FileTable extends NodeType {
   private hashTable: Map<string, FileNode>
   name() { return "root" }
   dump() {}
-  async node() {}
+  async node(path?: string | string[]): Promise<NodeType | void> {
+    let pathlist = path ? Array.isArray(path) ? path : path.split('/') : []
+    let next = pathlist.shift()
+    if (next) {
+      let nextnode = this.hashTable.get(next)
+      if (!nextnode) return
+      return await nextnode.node(pathlist)
+    }
+    else {
+      return this
+    }
+  }
+  async list() {
+    return Array.from(this.hashTable.keys())
+  }
 }
 
 export default FileTable

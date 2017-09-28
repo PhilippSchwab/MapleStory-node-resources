@@ -1,17 +1,17 @@
 import {NodeType, ValueNodeType} from './NodeType';
 import * as Parser from '../parser';
 
-type refType =  Parser.ImageTypes.ImageNode |
-      Parser.ImageTypes.ImageNodeNullValue  |
-      Parser.ImageTypes.ImageNodeIntValue   |
-      Parser.ImageTypes.ImageNodeFloatValue |
-      Parser.ImageTypes.ImageNodeStringValue;
+export type refType = Parser.ImageTypes.ImageNode |
+            Parser.ImageTypes.ImageNodeNullValue  |
+            Parser.ImageTypes.ImageNodeIntValue   |
+            Parser.ImageTypes.ImageNodeFloatValue |
+            Parser.ImageTypes.ImageNodeStringValue;
 
-interface nodeType {
+export interface nodeType {
   type: "nodeType"
   value: Parser.ImageTypes.ImageNode
   index?: {
-    class: string
+    class: "Property" | "Shape2D#Vector2D" | "Shape2D#Convex2D" | "Canvas" | "Sound_DX8" | "UOL"
     hashTable?: Map<string, ImageSubNode>
     value?: Parser.wz_picture |
             Parser.wz_sound   |
@@ -19,7 +19,7 @@ interface nodeType {
             Parser.wz_uol
   }
 }
-interface valueType {
+export interface valueType {
   type: "valueType"
   value: Parser.ImageTypes.ImageNodeNullValue  |
          Parser.ImageTypes.ImageNodeIntValue   |
@@ -28,7 +28,7 @@ interface valueType {
 }
 
 export class ImageNodeContainer {
-  private content: nodeType | valueType
+  readonly content: nodeType | valueType
   private nodepoint: NodeType
   constructor(ref: refType, nodepoint: NodeType) {
     this.nodepoint = nodepoint
@@ -107,6 +107,13 @@ export class ImageSubNode extends ValueNodeType {
   }
   name() { return this.nodename }
   async node() {}
+  async list() {
+    if (this.container.content.type === 'nodeType') {
+      await this.container.unpack()
+      // TODO: list
+    }
+    else return
+  }
   async extract() {}
 }
 

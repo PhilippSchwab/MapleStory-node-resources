@@ -39,7 +39,7 @@ declare class Wz_File {
   constructor(file: string | FileClass)
   parse(): Promise<this>
   release(): void
-  value?: FileTypes[]
+  value?: FileTypes.FileDirInfo
 
   /**
    * 可选的解析中日志
