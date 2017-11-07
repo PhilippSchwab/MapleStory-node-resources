@@ -1,8 +1,9 @@
 import {NodeType, ValueNodeType} from './NodeType';
 import {ImageNodeContainer, ImageSubNode} from './ImageNodeContainer';
+import * as ExtractType from './extract';
 import * as Parser from '../parser';
 
-export class ImageNode extends ValueNodeType {
+export class ImageNode extends ValueNodeType implements ExtractType.ValueNodeType {
   private container: ImageNodeContainer
   private nodename: string
   private imagesubnode: Parser.wz_image
@@ -40,7 +41,9 @@ export class ImageNode extends ValueNodeType {
     }
     else return
   }
-  async extract() {}
+  extract() {
+    return ExtractType.extractContainer(this.container)
+  }
 }
 
 export default ImageNode

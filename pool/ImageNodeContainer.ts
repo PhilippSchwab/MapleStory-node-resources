@@ -1,4 +1,5 @@
 import {NodeType, ValueNodeType} from './NodeType';
+import * as ExtractType from './extract';
 import * as Parser from '../parser';
 
 export type refType = Parser.ImageTypes.ImageNode |
@@ -7,7 +8,7 @@ export type refType = Parser.ImageTypes.ImageNode |
             Parser.ImageTypes.ImageNodeFloatValue |
             Parser.ImageTypes.ImageNodeStringValue;
 
-export interface nodeType {
+export interface nodeType extends ExtractType.nodeType {
   type: "nodeType"
   value: Parser.ImageTypes.ImageNode
   index?: {
@@ -19,7 +20,7 @@ export interface nodeType {
             Parser.wz_uol
   }
 }
-export interface valueType {
+export interface valueType extends ExtractType.valueType {
   type: "valueType"
   value: Parser.ImageTypes.ImageNodeNullValue  |
          Parser.ImageTypes.ImageNodeIntValue   |
@@ -27,7 +28,7 @@ export interface valueType {
          Parser.ImageTypes.ImageNodeStringValue
 }
 
-export class ImageNodeContainer {
+export class ImageNodeContainer implements ExtractType.Container {
   readonly content: nodeType | valueType
   private nodepoint: NodeType
   constructor(ref: refType, nodepoint: NodeType) {
@@ -95,7 +96,7 @@ export class ImageNodeContainer {
  * - Property all export
  */
 
-export class ImageSubNode extends ValueNodeType {
+export class ImageSubNode extends ValueNodeType implements ExtractType.ValueNodeType {
   private container: ImageNodeContainer
   private nodename: string
   readonly imageNodeValue: NodeType
@@ -106,7 +107,7 @@ export class ImageSubNode extends ValueNodeType {
     this.imageNodeValue = imagenode || (<ImageSubNode>parent).imageNodeValue
   }
   name() { return this.nodename }
-  async node() {}
+  async node(): Promise<NodeType | void> {}
   async list() {
     if (this.container.content.type === 'nodeType') {
       await this.container.unpack()
@@ -114,7 +115,9 @@ export class ImageSubNode extends ValueNodeType {
     }
     else return
   }
-  async extract() {}
+  extract() {
+    return ExtractType.extractContainer(this.container)
+  }
 }
 
 export default ImageNodeContainer
