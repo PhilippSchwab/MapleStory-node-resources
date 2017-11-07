@@ -1,21 +1,21 @@
 declare class FileClass {
   constructor(file?: string)
-  /** descriptor.fd 用于存储打开的文件描述符 */
+  /** descriptor.fd for opening a file descriptor */
   descriptor: { fd?: number }
   filename?: string
   isFile: true
 
-  /** 文件此刻读取位置 */
+  /** file's now offset */
   offset: number
 
   open(filename?: string): Promise<this>
   close(): Promise<void>
 
-  /** 改变文件位置 */
+  /** change the offset */
   seek(position: number): number
-  /** 向前移动文件位置并返回移动量 */
+  /** shift the offset and return it */
   shift(position: number): number
-  /** 返回文件此刻读取位置 */
+  /** return file offset */
   pos(): number
 }
 interface FileClass {
